@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Instructor Portal{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        margin: 0;
+    }
+    .sidebar {
+        height: 100vh;
+        background-color: #2e7d32;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        width: 250px;
+        top: 0;
+        left: 0;
+    }
+    .sidebar h4 {
+        margin-bottom: 30px;
+        font-weight: bold;
+    }
+    .sidebar a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 10px 0;
+    }
+    .sidebar a:hover {
+        background-color: #1b5e20;
+        padding-left: 10px;
+    }
+    .main-content {
+        margin-left: 260px;
+        padding: 20px;
+    }
+</style>
+
+<div class="sidebar">
+    <h4>E-Learning (Instructor)</h4>
+    <a href="{% url 'instructor_dashboard' %}">Home</a>
+    <a href="{% url 'upload_materials' %}">Upload Materials</a>
+    <a href="{% url 'instructor_courses' %}">Courses</a>
+    <a href="{% url 'view_feedback' %}">View Feedback</a>
+    <a href="{% url 'attendance_home' %}">Attendance</a>
+    <a href="{% url 'student_list' %}">Manage Students</a>
+    <a href="{% url 'simulate_devops' %}">DevOps Simulation</a>
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
+
+<div class="main-content">
+    {% block instructor_content %}{% endblock %}
+</div>
+{% endblock %}

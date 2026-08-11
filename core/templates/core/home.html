@@ -1,0 +1,213 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}Home - E-Learning Platform{% endblock %}
+
+{% block content %}
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,149.3C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+        font-weight: 300;
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 80px 0;
+        background-color: #f8f9fa;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+        font-weight: 700;
+        color: #333;
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+    
+    .cta-title {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+    
+    /* Buttons */
+    .btn-hero {
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 10px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-login {
+        background: #fff;
+        color: #667eea;
+        border: 2px solid #fff;
+    }
+    
+    .btn-login:hover {
+        background: transparent;
+        color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+    }
+    
+    .btn-register {
+        background: #f5576c;
+        color: #fff;
+        border: 2px solid #f5576c;
+    }
+    
+    .btn-register:hover {
+        background: transparent;
+        color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .btn-hero {
+            display: block;
+            margin: 10px auto;
+            width: 80%;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Welcome to E-Learning Platform</h1>
+        <p class="hero-subtitle">Expand your knowledge, enhance your skills, and achieve your goals with our comprehensive online courses</p>
+        <div class="hero-buttons">
+            <a class="btn btn-hero btn-login" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-hero btn-register" href="{% url 'register' %}">Register Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose Our Platform?</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Expert Instructors</h3>
+                    <p>Learn from industry professionals with years of experience in their fields.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h3>Interactive Learning</h3>
+                    <p>Engage with interactive content, quizzes, and assignments for better retention.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Certification</h3>
+                    <p>Earn recognized certificates upon completion of your courses.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Ready to Start Your Learning Journey?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 30px;">Join thousands of students who are already advancing their careers with our courses.</p>
+        <a class="btn btn-hero btn-register" href="{% url 'register' %}">Get Started Today</a>
+    </div>
+</section>
+
+<!-- Font Awesome for Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
+

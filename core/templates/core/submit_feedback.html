@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Submit Feedback – {{ course.title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="content">Your Feedback:</label>
+        <textarea name="content" rows="5" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+    <a href="{% url 'my_courses' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

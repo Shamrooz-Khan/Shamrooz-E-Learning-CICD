@@ -1,0 +1,26 @@
+{% extends 'core/instructor_base.html' %}
+{% block instructor_content %}
+<h2>Mark Attendance – Select a Course</h2>
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Course Title</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ course.title }}</td>
+            <td>
+                <a href="{% url 'mark_attendance' course.id %}" class="btn btn-success btn-sm">Mark Attendance</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">You don't teach any courses yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

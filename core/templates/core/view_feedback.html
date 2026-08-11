@@ -1,0 +1,26 @@
+{% extends 'core/instructor_base.html' %}
+{% block instructor_content %}
+<h2>Student Feedback</h2>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Date</th>
+            <th>Course</th>
+            <th>Student</th>
+            <th>Feedback</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for feedback in feedbacks %}
+        <tr>
+            <td>{{ feedback.date }}</td>
+            <td>{{ feedback.course.title }}</td>
+            <td>{{ feedback.student.username }}</td>
+            <td>{{ feedback.content }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No feedback submitted yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

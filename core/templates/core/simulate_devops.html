@@ -1,0 +1,28 @@
+
+{% extends 'core/instructor_base.html' %}
+{% block instructor_content %}
+<h2>DevOps Simulation – Inject a DevOops!</h2>
+
+<form method="get" class="mb-4">
+    <label>Select a DevOops Error:</label>
+    <select name="error" class="form-select w-50 d-inline-block">
+        <option value="">-- Choose Error --</option>
+        {% for key, item in errors.items %}
+        <option value="{{ key }}" {% if selected == key %}selected{% endif %}>{{ item.title }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-danger">Simulate</button>
+</form>
+
+{% if detail %}
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+        <h5>{{ detail.title }}</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Error:</strong> {{ detail.error }}</p>
+        <p><strong>Fix:</strong> {{ detail.fix }}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

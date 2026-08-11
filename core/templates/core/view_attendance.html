@@ -1,0 +1,53 @@
+
+{% extends 'core/student_base.html' %}
+{% block content %}
+<h2>My Attendance</h2>
+
+<form method="get" class="row mb-3">
+    <div class="col-md-3">
+        <input type="date" name="start_date" value="{{ start_date }}" class="form-control" placeholder="Start date">
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="end_date" value="{{ end_date }}" class="form-control" placeholder="End date">
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'view_attendance' %}" class="btn btn-secondary w-100">Reset</a>
+    </div>
+</form>
+
+<div class="alert alert-info">
+    Attendance Summary:
+    <strong>{{ present_count }}</strong> / <strong>{{ total }}</strong> Present
+    (<strong>{{ percentage }}%</strong>)
+</div>
+
+<table class="table table-striped">
+    <thead class="table-secondary">
+        <tr>
+            <th>Date</th>
+            <th>Course</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.course.title }}</td>
+            <td>
+                {% if record.status == "Present" %}
+                <span class="badge bg-success">{{ record.status }}</span>
+                {% else %}
+                <span class="badge bg-danger">{{ record.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No attendance records yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

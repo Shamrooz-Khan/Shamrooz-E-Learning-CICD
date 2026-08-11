@@ -1,0 +1,20 @@
+{% extends 'core/student_base.html' %}
+{% block content %}
+<h2>Submit Feedback</h2>
+<form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="course">Select Course</label>
+        <select class="form-control" name="course" required>
+            {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="message">Your Feedback</label>
+        <textarea class="form-control" name="message" rows="4" required></textarea>
+    </div>
+    <button class="btn btn-success">Submit</button>
+</form>
+{% endblock %}

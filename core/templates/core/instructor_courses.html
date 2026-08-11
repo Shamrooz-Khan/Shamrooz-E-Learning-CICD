@@ -1,0 +1,35 @@
+
+{% extends 'core/instructor_base.html' %}
+{% block instructor_content %}
+<h2>Your Courses</h2>
+<table class="table table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Enrolled</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ course.title }}</td>
+            <td>{{ course.description|default:"-" }}</td>
+            <td>{{ course.students.count }}</td>
+            <td>
+            <a href="{% url 'mark_attendance' course.id %}" class="btn btn-outline-primary btn-sm">
+            Mark Attendance
+            </a>
+            </td>
+
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No courses found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
