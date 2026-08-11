@@ -1,13 +1,431 @@
 {% extends 'core/base.html' %}
+
+{% block title %}Submit Feedback - E-Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Submit Feedback – {{ course.title }}</h2>
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="content">Your Feedback:</label>
-        <textarea name="content" rows="5" class="form-control" required></textarea>
+
+<style>
+
+    /* =========================
+       FEEDBACK PAGE
+    ========================== */
+
+    .feedback-page {
+        min-height: calc(100vh - 70px);
+
+        padding: 40px 30px;
+
+        background: #f4f8fb;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: flex-start;
+    }
+
+
+    /* =========================
+       FEEDBACK CARD
+    ========================== */
+
+    .feedback-card {
+        width: 100%;
+
+        max-width: 800px;
+
+        background: white;
+
+        border-radius: 20px;
+
+        border: 1px solid #e1edf2;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px rgba(15, 76, 129, 0.08);
+    }
+
+
+    /* =========================
+       CARD HEADER
+    ========================== */
+
+    .feedback-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 30px;
+    }
+
+
+    .feedback-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.7rem;
+
+        font-weight: 800;
+    }
+
+
+    .feedback-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.9rem;
+    }
+
+
+    .course-name {
+        color: #7de1df;
+
+        font-weight: 700;
+    }
+
+
+    /* =========================
+       FORM
+    ========================== */
+
+    .feedback-body {
+        padding: 30px;
+    }
+
+
+    .feedback-label {
+        display: block;
+
+        margin-bottom: 9px;
+
+        color: #17324d;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .feedback-label i {
+        color: #20a4a8;
+
+        margin-right: 6px;
+    }
+
+
+    .feedback-textarea {
+        width: 100%;
+
+        min-height: 170px;
+
+        padding: 15px;
+
+        resize: vertical;
+
+        border: 1px solid #d8e4ea;
+
+        border-radius: 12px;
+
+        background: #fbfdfe;
+
+        color: #526572;
+
+        font-size: 0.95rem;
+
+        line-height: 1.6;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .feedback-textarea:focus {
+        outline: none;
+
+        border-color: #20a4a8;
+
+        background: white;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 164, 168, 0.12);
+    }
+
+
+    .feedback-textarea::placeholder {
+        color: #a0adb5;
+    }
+
+
+    /* =========================
+       BUTTONS
+    ========================== */
+
+    .feedback-actions {
+        display: flex;
+
+        gap: 12px;
+
+        margin-top: 25px;
+    }
+
+
+    .submit-button,
+    .cancel-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 7px;
+
+        padding: 11px 22px;
+
+        border-radius: 25px;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .submit-button {
+        border: none;
+
+        background: linear-gradient(
+            135deg,
+            #20a4a8,
+            #1976a3
+        );
+
+        color: white;
+
+        cursor: pointer;
+    }
+
+
+    .submit-button:hover {
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 7px 18px rgba(15, 76, 129, 0.18);
+    }
+
+
+    .cancel-button {
+        border: 1px solid #d8e4ea;
+
+        background: #f4f8fb;
+
+        color: #526572;
+    }
+
+
+    .cancel-button:hover {
+        background: #e8eef2;
+
+        color: #17324d;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* =========================
+       INFORMATION BOX
+    ========================== */
+
+    .feedback-info {
+        margin-top: 22px;
+
+        padding: 13px 16px;
+
+        border-left: 4px solid #20a4a8;
+
+        border-radius: 9px;
+
+        background: #e8f7f7;
+
+        color: #526572;
+
+        font-size: 0.8rem;
+
+        line-height: 1.5;
+    }
+
+
+    .feedback-info i {
+        color: #0f7f83;
+
+        margin-right: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 576px) {
+
+        .feedback-page {
+            padding: 20px 15px;
+        }
+
+        .feedback-header {
+            padding: 25px 20px;
+        }
+
+        .feedback-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .feedback-body {
+            padding: 22px;
+        }
+
+        .feedback-actions {
+            flex-direction: column;
+        }
+
+        .submit-button,
+        .cancel-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+<div class="feedback-page">
+
+```
+<div class="feedback-card">
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="feedback-header">
+
+        <h2>
+
+            <i class="fas fa-comment-dots me-2"></i>
+
+            Submit Feedback
+
+        </h2>
+
+        <p>
+
+            Share your experience and feedback about
+
+            <span class="course-name">
+                {{ course.title }}
+            </span>
+
+        </p>
+
     </div>
-    <button type="submit" class="btn btn-primary">Submit Feedback</button>
-    <a href="{% url 'my_courses' %}" class="btn btn-secondary">Cancel</a>
-</form>
+
+
+    <!-- =========================
+         FORM
+    ========================== -->
+
+    <div class="feedback-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <div>
+
+                <label
+                    for="content"
+                    class="feedback-label"
+                >
+
+                    <i class="fas fa-pen"></i>
+
+                    Your Feedback
+
+                </label>
+
+
+                <textarea
+                    name="content"
+                    id="content"
+                    rows="5"
+                    class="feedback-textarea"
+                    placeholder="Write your feedback about this course..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <!-- Buttons -->
+
+            <div class="feedback-actions">
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+
+                    <i class="fas fa-paper-plane"></i>
+
+                    Submit Feedback
+
+                </button>
+
+
+                <a
+                    href="{% url 'my_courses' %}"
+                    class="cancel-button"
+                >
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+
+            <!-- Information -->
+
+            <div class="feedback-info">
+
+                <i class="fas fa-info-circle"></i>
+
+                Your feedback helps instructors improve
+                the learning experience and course content.
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+
+</div>
+```
+
+</div>
+
 {% endblock %}

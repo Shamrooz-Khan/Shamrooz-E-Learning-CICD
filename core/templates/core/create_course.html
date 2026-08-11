@@ -1,12 +1,352 @@
 {% extends 'core/instructor_base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h2>Create New Course</h2>
+{% block instructor_content %}
+
+<style>
+
+    /* =========================
+       CREATE COURSE PAGE
+    ========================== */
+
+    .create-course-page {
+        min-height: calc(100vh - 40px);
+
+        padding: 10px 10px 40px;
+
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .course-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 28px 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .course-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.75rem;
+
+        font-weight: 800;
+    }
+
+
+    .course-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.9rem;
+    }
+
+
+    /* =========================
+       FORM CARD
+    ========================== */
+
+    .course-form-card {
+        max-width: 850px;
+
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    /* =========================
+       DJANGO FORM
+    ========================== */
+
+    .course-form-card p {
+        margin-bottom: 20px;
+    }
+
+
+    .course-form-card label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #17324d;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .course-form-card input,
+    .course-form-card select,
+    .course-form-card textarea {
+        width: 100%;
+
+        padding: 11px 14px;
+
+        border: 1px solid #d8e4ea;
+
+        border-radius: 10px;
+
+        background: #fbfdfe;
+
+        color: #526572;
+
+        font-size: 0.9rem;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .course-form-card input:focus,
+    .course-form-card select:focus,
+    .course-form-card textarea:focus {
+        outline: none;
+
+        border-color: #20a4a8;
+
+        background: white;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 164, 168, 0.12);
+    }
+
+
+    .course-form-card textarea {
+        min-height: 130px;
+
+        resize: vertical;
+    }
+
+
+    .course-form-card .helptext {
+        display: block;
+
+        margin-top: 6px;
+
+        color: #8796a0;
+
+        font-size: 0.78rem;
+    }
+
+
+    .course-form-card ul.errorlist {
+        margin: 5px 0 8px;
+
+        padding: 0;
+
+        list-style: none;
+
+        color: #dc3545;
+
+        font-size: 0.8rem;
+    }
+
+
+    /* =========================
+       BUTTON
+    ========================== */
+
+    .create-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 12px 25px;
+
+        border: none;
+
+        border-radius: 25px;
+
+        background: linear-gradient(
+            135deg,
+            #20a4a8,
+            #1976a3
+        );
+
+        color: white;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease;
+
+        box-shadow:
+            0 5px 15px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .create-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 20px rgba(15, 76, 129, 0.2);
+    }
+
+
+    /* =========================
+       INFORMATION BOX
+    ========================== */
+
+    .course-info {
+        max-width: 850px;
+
+        margin-top: 20px;
+
+        padding: 15px 18px;
+
+        background: #e8f7f7;
+
+        border-left: 4px solid #20a4a8;
+
+        border-radius: 10px;
+
+        color: #526572;
+
+        font-size: 0.82rem;
+
+        line-height: 1.6;
+    }
+
+
+    .course-info i {
+        color: #0f7f83;
+
+        margin-right: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .create-course-page {
+            padding: 5px 0 30px;
+        }
+
+        .course-header {
+            padding: 25px 20px;
+        }
+
+        .course-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .course-form-card {
+            padding: 22px;
+        }
+
+        .create-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+<div class="create-course-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="course-header">
+
+    <h2>
+
+        <i class="fas fa-plus-circle me-2"></i>
+
+        Create New Course
+
+    </h2>
+
+    <p>
+        Create and publish a new course for your students.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     COURSE FORM
+========================== -->
+
+<div class="course-form-card">
+
     <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-success">Create</button>
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+
+        <button
+            type="submit"
+            class="create-button"
+        >
+
+            <i class="fas fa-plus"></i>
+
+            Create Course
+
+        </button>
+
     </form>
-  </div>
+
+</div>
+
+
+<!-- =========================
+     INFORMATION
+========================== -->
+
+<div class="course-info">
+
+    <i class="fas fa-info-circle"></i>
+
+    Complete the course information carefully before
+    creating the course. The course will become available
+    for students according to the platform settings.
+
+</div>
+```
+
+</div>
+
 {% endblock %}
+

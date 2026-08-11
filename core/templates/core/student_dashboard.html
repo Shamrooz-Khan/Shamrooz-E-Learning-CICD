@@ -1,136 +1,817 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Student Dashboard{% endblock %}
+{% block title %}Student Dashboard - E-Learning Platform{% endblock %}
 
 {% block content %}
+
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-    }
 
-    .topbar {
-        height: 80px;
-        background: linear-gradient(to right, #f44336, #ff5722);
-        color: white;
-        display: flex;
-        align-items: center;
-        padding-left: 270px;
-        font-size: 20px;
-        font-weight: bold;
-    }
+    /* =========================
+       STUDENT DASHBOARD
+    ========================== */
 
-    .sidebar {
-        height: 100vh;
-        width: 250px;
-        background: #eeeeee;
-        padding: 20px;
-        position: fixed;
-        left: 0;
-        top: 0;
-        overflow-y: auto;
-    }
-
-    .sidebar .profile {
-        background: linear-gradient(to right, #e53935, #d81b60);
-        color: white;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 30px;
-        font-size: 14px;
-    }
-
-    .sidebar .profile img {
-        border-radius: 50%;
-        width: 50px;
-        float: left;
-        margin-right: 10px;
-    }
-
-    .sidebar a {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: #333;
-        padding: 10px 0;
-    }
-
-    .sidebar a i {
-        margin-right: 10px;
-    }
-
-    .main-content {
-        margin-left: 270px;
+    .student-dashboard {
+        min-height: calc(100vh - 70px);
+        background: #f4f8fb;
         padding: 30px;
-        background: #f5f5f5;
-        min-height: 100vh;
     }
 
-    .card-box {
-        background: #ffc107;
-        padding: 20px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        position: relative;
-        cursor: pointer;
+
+    /* =========================
+       DASHBOARD HEADER
+    ========================== */
+
+    .dashboard-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 65%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        border-radius: 18px;
+
+        padding: 30px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
     }
+
+
+    .dashboard-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+
+    .dashboard-header p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.82);
+    }
+
+
+    /* =========================
+       DASHBOARD LAYOUT
+    ========================== */
+
+    .dashboard-layout {
+        display: grid;
+
+        grid-template-columns: 250px 1fr;
+
+        gap: 25px;
+
+        align-items: start;
+    }
+
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .student-sidebar {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 20px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    /* Profile */
+
+    .student-profile {
+        background: linear-gradient(
+            135deg,
+            #0f4c81,
+            #1976a3
+        );
+
+        color: white;
+
+        padding: 20px;
+
+        border-radius: 14px;
+
+        margin-bottom: 20px;
+
+        text-align: center;
+    }
+
+
+    .profile-avatar {
+        width: 65px;
+        height: 65px;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+
+        border: 3px solid white;
+
+        margin-bottom: 10px;
+
+        background: white;
+    }
+
+
+    .student-profile strong {
+        display: block;
+
+        font-size: 1rem;
+
+        margin-bottom: 4px;
+    }
+
+
+    .student-profile small {
+        color: rgba(255, 255, 255, 0.8);
+
+        word-break: break-word;
+    }
+
+
+    /* Sidebar Links */
+
+    .student-sidebar a {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 12px 14px;
+
+        margin-bottom: 5px;
+
+        border-radius: 10px;
+
+        color: #526572;
+
+        text-decoration: none;
+
+        font-size: 0.9rem;
+
+        font-weight: 500;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .student-sidebar a i {
+        width: 22px;
+
+        text-align: center;
+
+        color: #0f4c81;
+
+        font-size: 20px;
+    }
+
+
+    .student-sidebar a:hover {
+        background: #e8f7f7;
+
+        color: #0f4c81;
+
+        transform: translateX(3px);
+    }
+
+
+    .student-sidebar a:hover i {
+        color: #20a4a8;
+    }
+
+
+    /* Logout */
+
+    .logout-link {
+        margin-top: 15px !important;
+
+        border-top: 1px solid #e8eef2;
+
+        padding-top: 17px !important;
+
+        color: #dc3545 !important;
+    }
+
+
+    .logout-link i {
+        color: #dc3545 !important;
+    }
+
+
+    .logout-link:hover {
+        background: #fff1f1 !important;
+
+        color: #dc3545 !important;
+    }
+
+
+    /* =========================
+       MAIN DASHBOARD
+    ========================== */
+
+    .dashboard-main {
+        min-width: 0;
+    }
+
+
+    /* =========================
+       WELCOME CARD
+    ========================== */
+
+    .welcome-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        margin-bottom: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .welcome-card h4 {
+        color: #17324d;
+
+        font-weight: 800;
+
+        margin-bottom: 8px;
+    }
+
+
+    .welcome-card p {
+        color: #6c757d;
+
+        margin-bottom: 0;
+
+        line-height: 1.6;
+    }
+
+
+    /* =========================
+       COURSE FEATURE CARD
+    ========================== */
+
+    .course-feature {
+        position: relative;
+
+        background: linear-gradient(
+            135deg,
+            #20a4a8,
+            #1976a3
+        );
+
+        color: white;
+
+        border-radius: 18px;
+
+        padding: 30px;
+
+        margin-bottom: 30px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px rgba(32, 164, 168, 0.15);
+    }
+
+
+    .course-feature::after {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.08);
+
+        right: -60px;
+        top: -70px;
+    }
+
+
+    .course-feature-content {
+        position: relative;
+
+        z-index: 2;
+    }
+
+
+    .course-feature h4 {
+        font-size: 1.35rem;
+
+        font-weight: 800;
+
+        margin-bottom: 8px;
+    }
+
+
+    .course-feature p {
+        margin-bottom: 20px;
+
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+
+    .course-button {
+        display: inline-block;
+
+        background: white;
+
+        color: #0f4c81;
+
+        padding: 10px 20px;
+
+        border-radius: 25px;
+
+        text-decoration: none;
+
+        font-weight: 700;
+
+        font-size: 0.9rem;
+
+        transition: all 0.3s ease;
+    }
+
+
+    .course-button:hover {
+        transform: translateY(-2px);
+
+        color: #20a4a8;
+
+        box-shadow:
+            0 6px 15px rgba(0, 0, 0, 0.12);
+    }
+
 
     .badge-new {
-        background-color: #e53935;
-        color: white;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 3px;
         position: absolute;
-        top: 10px;
-        right: 10px;
+
+        top: 20px;
+        right: 20px;
+
+        z-index: 3;
+
+        background: #ffca28;
+
+        color: #17324d;
+
+        padding: 5px 10px;
+
+        border-radius: 20px;
+
+        font-size: 0.7rem;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
     }
+
+
+    /* =========================
+       NOTIFICATIONS
+    ========================== */
+
+    .notifications-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .notifications-header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 18px;
+    }
+
+
+    .notifications-header h4 {
+        color: #17324d;
+
+        font-weight: 800;
+
+        margin: 0;
+    }
+
+
+    .notification-icon {
+        width: 38px;
+        height: 38px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 10px;
+
+        background: #e8f7f7;
+
+        color: #0f7f83;
+    }
+
+
+    .notification-list {
+        border-radius: 12px;
+
+        overflow: hidden;
+    }
+
+
+    .notification-item {
+        border: none;
+
+        border-bottom: 1px solid #edf2f5;
+
+        padding: 15px;
+
+        color: #526572;
+
+        background: white;
+    }
+
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+
+    .notification-message {
+        color: #17324d;
+
+        font-size: 0.9rem;
+
+        margin-bottom: 5px;
+    }
+
+
+    .notification-date {
+        color: #8a99a3;
+
+        font-size: 0.75rem;
+    }
+
+
+    .view-all {
+        color: #0f4c81;
+
+        font-weight: 700;
+
+        text-decoration: none;
+
+        font-size: 0.9rem;
+    }
+
+
+    .view-all:hover {
+        color: #20a4a8;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 992px) {
+
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .student-sidebar {
+            width: 100%;
+        }
+
+        .student-profile {
+            text-align: left;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .profile-avatar {
+            margin: 0;
+        }
+
+    }
+
+
+    @media (max-width: 768px) {
+
+        .student-dashboard {
+            padding: 20px 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .course-feature {
+            padding: 25px 20px;
+        }
+
+    }
+
 </style>
 
-<!-- TOP NAVBAR -->
-<div class="topbar">
-    Learning Management System
+<div class="student-dashboard">
+
+```
+<!-- =========================
+     DASHBOARD HEADER
+========================== -->
+
+<div class="dashboard-header">
+
+    <h2>
+        <i class="fas fa-graduation-cap me-2"></i>
+        Student Dashboard
+    </h2>
+
+    <p>
+        Welcome back, {{ user.username }}.
+        Continue your learning journey and track your progress.
+    </p>
+
 </div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="profile">
-        <img src="{% static 'default-avatar.png' %}" alt="Profile">
-        <strong>{{ user.username }} ({{ user.role }})</strong><br>
-        {{ user.email }}
-    </div>
-    <a href="{% url 'available_courses' %}">Enroll in Courses</a>  
-    <a href="{% url 'my_courses' %}">Enrolled Courses</a>
-    <a href="{% url 'view_attendance' %}"> Attendance </a>
-    <a href="#"><i class="material-icons">assessment</i> Student Result</a>
-    <a href="#"><i class="material-icons">assignment</i> Assignment(s)</a>
-    <a href="#"><i class="material-icons">menu_book</i> Course Book(s)</a>
-    <a href="#"><i class="material-icons">feedback</i> Feedback</a>
-    <a href="{% url 'logout' %}"><i class="material-icons">logout</i> Logout</a>
+
+<!-- =========================
+     DASHBOARD LAYOUT
+========================== -->
+
+<div class="dashboard-layout">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="student-sidebar">
+
+
+        <!-- Profile -->
+
+        <div class="student-profile">
+
+            <img
+                src="{% static 'default-avatar.png' %}"
+                alt="Profile"
+                class="profile-avatar"
+            >
+
+            <div>
+
+                <strong>
+                    {{ user.username }}
+                </strong>
+
+                <small>
+                    {{ user.role }}
+                </small>
+
+                <small class="d-block">
+                    {{ user.email }}
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- Navigation -->
+
+        <a href="{% url 'available_courses' %}">
+            <i class="material-icons">school</i>
+            <span>Enroll in Courses</span>
+        </a>
+
+
+        <a href="{% url 'my_courses' %}">
+            <i class="material-icons">menu_book</i>
+            <span>Enrolled Courses</span>
+        </a>
+
+
+        <a href="{% url 'view_attendance' %}">
+            <i class="material-icons">event_available</i>
+            <span>Attendance</span>
+        </a>
+
+
+        <a href="#">
+            <i class="material-icons">assessment</i>
+            <span>Student Result</span>
+        </a>
+
+
+        <a href="#">
+            <i class="material-icons">assignment</i>
+            <span>Assignments</span>
+        </a>
+
+
+        <a href="#">
+            <i class="material-icons">menu_book</i>
+            <span>Course Books</span>
+        </a>
+
+
+        <a href="#">
+            <i class="material-icons">feedback</i>
+            <span>Feedback</span>
+        </a>
+
+
+        <a href="{% url 'logout' %}"
+           class="logout-link">
+
+            <i class="material-icons">logout</i>
+
+            <span>Logout</span>
+
+        </a>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="dashboard-main">
+
+
+        <!-- Welcome -->
+
+        <div class="welcome-card">
+
+            <h4>
+                Welcome to Your Learning Space
+            </h4>
+
+            <p>
+                Access your courses, monitor attendance,
+                review learning materials, and stay updated
+                with the latest notifications.
+            </p>
+
+        </div>
+
+
+        <!-- Subject Videos -->
+
+        <div class="course-feature">
+
+            <span class="badge-new">
+                New
+            </span>
+
+            <div class="course-feature-content">
+
+                <h4>
+                    <i class="fas fa-play-circle me-2"></i>
+                    Subject-wise Videos
+                </h4>
+
+                <p>
+                    Explore learning videos organized by subject
+                    to support your studies and improve your understanding.
+                </p>
+
+                <a href="{% url 'my_courses' %}"
+                   class="course-button">
+
+                    Explore Courses
+                    <i class="fas fa-arrow-right ms-1"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             NOTIFICATIONS
+        ========================== -->
+
+        <div class="notifications-card">
+
+            <div class="notifications-header">
+
+                <h4>
+                    <i class="fas fa-bell me-2"></i>
+                    Recent Notifications
+                </h4>
+
+                <div class="notification-icon">
+
+                    <i class="fas fa-bell"></i>
+
+                </div>
+
+            </div>
+
+
+            <div class="notification-list list-group">
+
+                {% for note in request.user.notification_set.all|dictsortreversed:"created_at"|slice:":5" %}
+
+                    <div class="notification-item list-group-item">
+
+                        <div class="notification-message">
+
+                            {{ note.message }}
+
+                        </div>
+
+                        <div class="notification-date">
+
+                            <i class="far fa-clock me-1"></i>
+
+                            {{ note.created_at|date:"d M Y H:i" }}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="notification-item list-group-item text-muted">
+
+                        <i class="far fa-bell-slash me-2"></i>
+
+                        No recent notifications.
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="mt-3">
+
+                <a href="{% url 'notifications' %}"
+                   class="view-all">
+
+                    View All Notifications
+                    <i class="fas fa-arrow-right ms-1"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+```
+
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="main-content">
-    <div class="card-box">
-        Subject wise Videos
-        <span class="badge-new">New</span>
-    </div>
-     <!-- Notifications Start -->
-    <h4 class="mt-4">Recent Notifications</h4>
-    <ul class="list-group">
-        {% for note in request.user.notification_set.all|dictsortreversed:"created_at"|slice:":5" %}
-            <li class="list-group-item small">
-                {{ note.message }}<br>
-                <small class="text-muted">{{ note.created_at|date:"d M Y H:i" }}</small>
-            </li>
-        {% empty %}
-            <li class="list-group-item">No recent notifications.</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'notifications' %}" class="btn btn-link mt-2">View all</a>
-    <!-- Notifications End -->
-</div>
 {% endblock %}

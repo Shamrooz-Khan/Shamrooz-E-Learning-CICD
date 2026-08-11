@@ -1,43 +1,663 @@
-
 {% extends 'core/instructor_base.html' %}
+
 {% block instructor_content %}
 
-<h2>Student Management</h2>
-<div class="mb-3 text-end">
-    <a href="{% url 'create_student' %}" class="btn btn-primary">
-        <i class="bi bi-person-plus"></i> Add New Student
-    </a>
-</div>
-<form method="get" class="mb-3">
-    <div class="input-group">
-        <input type="text" name="q" placeholder="Search by name or email" value="{{ query }}" class="form-control">
-        <button type="submit" class="btn btn-outline-secondary">Search</button>
-    </div>
-</form>
+<style>
 
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in students %}
-        <tr>
-            <td>{{ student.id }}</td>
-            <td>{{ student.username }}</td>
-            <td>{{ student.email }}</td>
-            <td>
-                <a href="{% url 'edit_student' student.id %}" class="btn btn-warning btn-sm">Edit</a>
-                <a href="{% url 'delete_student' student.id %}" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4">No students found.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+    /* =========================
+       STUDENT MANAGEMENT PAGE
+    ========================== */
+
+    .students-page {
+        min-height: calc(100vh - 40px);
+
+        padding: 10px 10px 40px;
+
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .students-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 28px 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 20px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+    }
+
+
+    .students-header h2 {
+        margin: 0 0 7px;
+
+        font-size: 1.75rem;
+
+        font-weight: 800;
+    }
+
+
+    .students-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.9rem;
+    }
+
+
+    /* =========================
+       ADD STUDENT BUTTON
+    ========================== */
+
+    .add-student-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 11px 20px;
+
+        border-radius: 25px;
+
+        background: #20a4a8;
+
+        border: 2px solid #20a4a8;
+
+        color: white;
+
+        text-decoration: none;
+
+        white-space: nowrap;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .add-student-button:hover {
+        background: white;
+
+        border-color: white;
+
+        color: #0f4c81;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+
+    /* =========================
+       SEARCH CARD
+    ========================== */
+
+    .search-card {
+        background: white;
+
+        padding: 20px;
+
+        border-radius: 16px;
+
+        border: 1px solid #e1edf2;
+
+        margin-bottom: 20px;
+
+        box-shadow:
+            0 6px 20px rgba(15, 76, 129, 0.05);
+    }
+
+
+    .search-group {
+        display: flex;
+
+        gap: 10px;
+    }
+
+
+    .search-input {
+        flex: 1;
+
+        min-height: 45px;
+
+        border: 1px solid #d8e4ea;
+
+        border-radius: 10px;
+
+        padding: 10px 14px;
+
+        color: #526572;
+
+        background: #fbfdfe;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .search-input:focus {
+        outline: none;
+
+        border-color: #20a4a8;
+
+        background: white;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 164, 168, 0.12);
+    }
+
+
+    .search-button {
+        min-width: 110px;
+
+        border: none;
+
+        border-radius: 10px;
+
+        background: #0f4c81;
+
+        color: white;
+
+        font-weight: 700;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .search-button:hover {
+        background: #20a4a8;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* =========================
+       TABLE CARD
+    ========================== */
+
+    .students-table-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+
+    .students-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+
+        border-spacing: 0;
+    }
+
+
+    .students-table thead th {
+        background: #17324d;
+
+        color: white;
+
+        border: none;
+
+        padding: 15px;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+    }
+
+
+    .students-table thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+
+    .students-table thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+
+    .students-table tbody td {
+        padding: 15px;
+
+        vertical-align: middle;
+
+        color: #526572;
+
+        background: white;
+
+        border-bottom: 1px solid #edf2f5;
+    }
+
+
+    .students-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+
+    .students-table tbody tr:hover td {
+        background: #f7fbfc;
+    }
+
+
+    /* =========================
+       STUDENT DETAILS
+    ========================== */
+
+    .student-id {
+        color: #0f4c81 !important;
+
+        font-weight: 700;
+    }
+
+
+    .student-username {
+        color: #17324d !important;
+
+        font-weight: 700;
+    }
+
+
+    .student-email {
+        color: #667781 !important;
+    }
+
+
+    /* =========================
+       ACTION BUTTONS
+    ========================== */
+
+    .action-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        padding: 7px 13px;
+
+        border-radius: 8px;
+
+        font-size: 0.78rem;
+
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition: all 0.2s ease;
+
+        margin-right: 5px;
+    }
+
+
+    .edit-button {
+        background: #fff4d6;
+
+        color: #9a6a00;
+
+        border: 1px solid #f3d98b;
+    }
+
+
+    .edit-button:hover {
+        background: #ffc107;
+
+        color: #17324d;
+
+        transform: translateY(-2px);
+    }
+
+
+    .delete-button {
+        background: #fff0f0;
+
+        color: #dc3545;
+
+        border: 1px solid #f3c5c9;
+    }
+
+
+    .delete-button:hover {
+        background: #dc3545;
+
+        color: white;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-state {
+        text-align: center;
+
+        padding: 55px 20px !important;
+
+        color: #7a8a95 !important;
+    }
+
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #e8f7f7;
+
+        color: #0f7f83;
+
+        font-size: 1.5rem;
+    }
+
+
+    .empty-state strong {
+        display: block;
+
+        color: #526572;
+
+        margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .students-page {
+            padding: 5px 0 30px;
+        }
+
+        .students-header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            padding: 25px 20px;
+        }
+
+        .students-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .add-student-button {
+            width: 100%;
+
+            justify-content: center;
+        }
+
+        .search-group {
+            flex-direction: column;
+        }
+
+        .search-button {
+            width: 100%;
+
+            min-height: 45px;
+        }
+
+        .students-table-card {
+            padding: 15px;
+        }
+
+    }
+
+</style>
+
+<div class="students-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="students-header">
+
+    <div>
+
+        <h2>
+
+            <i class="fas fa-user-graduate me-2"></i>
+
+            Student Management
+
+        </h2>
+
+        <p>
+            Manage student accounts and information.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'create_student' %}"
+        class="add-student-button"
+    >
+
+        <i class="fas fa-user-plus"></i>
+
+        Add New Student
+
+    </a>
+
+</div>
+
+
+<!-- =========================
+     SEARCH
+========================== -->
+
+<div class="search-card">
+
+    <form method="get">
+
+        <div class="search-group">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search by name or email"
+                value="{{ query }}"
+                class="search-input"
+            >
+
+            <button
+                type="submit"
+                class="search-button"
+            >
+
+                <i class="fas fa-search me-1"></i>
+
+                Search
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     STUDENT TABLE
+========================== -->
+
+<div class="students-table-card">
+
+    <div class="table-wrapper">
+
+        <table class="students-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Username</th>
+
+                    <th>Email</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for student in students %}
+
+                <tr>
+
+                    <td class="student-id">
+
+                        #{{ student.id }}
+
+                    </td>
+
+
+                    <td class="student-username">
+
+                        <i class="fas fa-user me-2"
+                           style="color: #20a4a8;">
+                        </i>
+
+                        {{ student.username }}
+
+                    </td>
+
+
+                    <td class="student-email">
+
+                        <i class="fas fa-envelope me-2"
+                           style="color: #0f4c81;">
+                        </i>
+
+                        {{ student.email }}
+
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{% url 'edit_student' student.id %}"
+                            class="action-button edit-button"
+                        >
+
+                            <i class="fas fa-edit"></i>
+
+                            Edit
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'delete_student' student.id %}"
+                            class="action-button delete-button"
+                        >
+
+                            <i class="fas fa-trash-alt"></i>
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="empty-state"
+                    >
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-user-slash"></i>
+
+                        </div>
+
+                        <strong>
+                            No Students Found
+                        </strong>
+
+                        No students match your search.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 {% endblock %}

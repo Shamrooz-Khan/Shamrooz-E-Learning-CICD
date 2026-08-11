@@ -1,53 +1,700 @@
-
 {% extends 'core/student_base.html' %}
+
 {% block content %}
-<h2>My Attendance</h2>
 
-<form method="get" class="row mb-3">
-    <div class="col-md-3">
-        <input type="date" name="start_date" value="{{ start_date }}" class="form-control" placeholder="Start date">
-    </div>
-    <div class="col-md-3">
-        <input type="date" name="end_date" value="{{ end_date }}" class="form-control" placeholder="End date">
-    </div>
-    <div class="col-md-3">
-        <button type="submit" class="btn btn-primary w-100">Filter</button>
-    </div>
-    <div class="col-md-3">
-        <a href="{% url 'view_attendance' %}" class="btn btn-secondary w-100">Reset</a>
-    </div>
-</form>
+<style>
 
-<div class="alert alert-info">
-    Attendance Summary:
-    <strong>{{ present_count }}</strong> / <strong>{{ total }}</strong> Present
-    (<strong>{{ percentage }}%</strong>)
+    /* =========================
+       ATTENDANCE PAGE
+    ========================== */
+
+    .attendance-page {
+        min-height: calc(100vh - 70px);
+        padding: 30px;
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .attendance-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .attendance-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.8rem;
+
+        font-weight: 800;
+    }
+
+
+    .attendance-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.95rem;
+    }
+
+
+    /* =========================
+       FILTER CARD
+    ========================== */
+
+    .filter-card {
+        background: white;
+
+        padding: 22px;
+
+        border-radius: 16px;
+
+        border: 1px solid #e1edf2;
+
+        margin-bottom: 20px;
+
+        box-shadow:
+            0 6px 20px rgba(15, 76, 129, 0.05);
+    }
+
+
+    .filter-label {
+        display: block;
+
+        margin-bottom: 7px;
+
+        color: #526572;
+
+        font-size: 0.8rem;
+
+        font-weight: 700;
+    }
+
+
+    .filter-card input[type="date"] {
+        min-height: 45px;
+
+        border: 1px solid #d8e4ea;
+
+        border-radius: 10px;
+
+        padding: 9px 12px;
+
+        color: #526572;
+
+        background: #fbfdfe;
+    }
+
+
+    .filter-card input[type="date"]:focus {
+        border-color: #20a4a8;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 164, 168, 0.12);
+
+        outline: none;
+    }
+
+
+    /* =========================
+       BUTTONS
+    ========================== */
+
+    .filter-button,
+    .reset-button {
+        min-height: 45px;
+
+        border-radius: 10px;
+
+        font-weight: 700;
+
+        border: none;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .filter-button {
+        background: #20a4a8;
+
+        color: white;
+    }
+
+
+    .filter-button:hover {
+        background: #0f4c81;
+
+        color: white;
+
+        transform: translateY(-2px);
+    }
+
+
+    .reset-button {
+        background: #e8eef2;
+
+        color: #526572;
+    }
+
+
+    .reset-button:hover {
+        background: #dce5ea;
+
+        color: #17324d;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* =========================
+       SUMMARY
+    ========================== */
+
+    .attendance-summary {
+        background: linear-gradient(
+            135deg,
+            #e8f7f7,
+            #eef7fb
+        );
+
+        border: none;
+
+        border-left: 5px solid #20a4a8;
+
+        border-radius: 14px;
+
+        padding: 20px 22px;
+
+        margin-bottom: 20px;
+
+        color: #526572;
+
+        box-shadow:
+            0 5px 18px rgba(15, 76, 129, 0.05);
+    }
+
+
+    .summary-title {
+        display: block;
+
+        color: #17324d;
+
+        font-weight: 800;
+
+        margin-bottom: 8px;
+    }
+
+
+    .summary-number {
+        color: #0f4c81;
+
+        font-size: 1.05rem;
+
+        font-weight: 800;
+    }
+
+
+    .summary-percentage {
+        color: #20a4a8;
+
+        font-size: 1.15rem;
+
+        font-weight: 800;
+    }
+
+
+    /* =========================
+       TABLE CARD
+    ========================== */
+
+    .attendance-table-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+
+    .attendance-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+
+        border-spacing: 0;
+    }
+
+
+    .attendance-table thead th {
+        background: #17324d;
+
+        color: white;
+
+        border: none;
+
+        padding: 15px;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .attendance-table thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+
+    .attendance-table thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+
+    .attendance-table tbody td {
+        padding: 15px;
+
+        vertical-align: middle;
+
+        color: #526572;
+
+        background: white;
+
+        border-bottom: 1px solid #edf2f5;
+    }
+
+
+    .attendance-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+
+    .attendance-table tbody tr:hover td {
+        background: #f7fbfc;
+    }
+
+
+    .course-name {
+        color: #17324d !important;
+
+        font-weight: 600;
+    }
+
+
+    .attendance-date {
+        color: #667781 !important;
+
+        font-weight: 500;
+    }
+
+
+    /* =========================
+       STATUS BADGES
+    ========================== */
+
+    .status-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        padding: 6px 12px;
+
+        border-radius: 20px;
+
+        font-size: 0.75rem;
+
+        font-weight: 800;
+    }
+
+
+    .status-present {
+        background: #e6f7ee;
+
+        color: #198754;
+    }
+
+
+    .status-absent {
+        background: #fff0f0;
+
+        color: #dc3545;
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-state {
+        text-align: center;
+
+        padding: 50px 20px !important;
+
+        color: #7a8a95 !important;
+    }
+
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #e8f7f7;
+
+        color: #0f7f83;
+
+        font-size: 1.5rem;
+    }
+
+
+    .empty-state strong {
+        display: block;
+
+        color: #526572;
+
+        margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .attendance-page {
+            padding: 20px 15px;
+        }
+
+        .attendance-header {
+            padding: 25px 20px;
+        }
+
+        .attendance-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .filter-card {
+            padding: 18px;
+        }
+
+        .attendance-table-card {
+            padding: 15px;
+        }
+
+    }
+
+</style>
+
+<div class="attendance-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="attendance-header">
+
+    <h2>
+        <i class="fas fa-calendar-check me-2"></i>
+        My Attendance
+    </h2>
+
+    <p>
+        View your attendance records and track your attendance
+        across your enrolled courses.
+    </p>
+
 </div>
 
-<table class="table table-striped">
-    <thead class="table-secondary">
-        <tr>
-            <th>Date</th>
-            <th>Course</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for record in records %}
-        <tr>
-            <td>{{ record.date }}</td>
-            <td>{{ record.course.title }}</td>
-            <td>
-                {% if record.status == "Present" %}
-                <span class="badge bg-success">{{ record.status }}</span>
-                {% else %}
-                <span class="badge bg-danger">{{ record.status }}</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">No attendance records yet.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<!-- =========================
+     FILTER
+========================== -->
+
+<div class="filter-card">
+
+    <form method="get" class="row g-3 align-items-end">
+
+
+        <div class="col-md-3">
+
+            <label class="filter-label"
+                   for="start_date">
+
+                Start Date
+
+            </label>
+
+            <input
+                type="date"
+                id="start_date"
+                name="start_date"
+                value="{{ start_date }}"
+                class="form-control"
+                placeholder="Start date"
+            >
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <label class="filter-label"
+                   for="end_date">
+
+                End Date
+
+            </label>
+
+            <input
+                type="date"
+                id="end_date"
+                name="end_date"
+                value="{{ end_date }}"
+                class="form-control"
+                placeholder="End date"
+            >
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <button
+                type="submit"
+                class="btn filter-button w-100"
+            >
+
+                <i class="fas fa-filter me-1"></i>
+
+                Filter
+
+            </button>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'view_attendance' %}"
+                class="btn reset-button w-100"
+            >
+
+                <i class="fas fa-undo me-1"></i>
+
+                Reset
+
+            </a>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     ATTENDANCE SUMMARY
+========================== -->
+
+<div class="attendance-summary">
+
+    <span class="summary-title">
+
+        <i class="fas fa-chart-pie me-2"></i>
+
+        Attendance Summary
+
+    </span>
+
+
+    <span class="summary-number">
+
+        {{ present_count }}
+
+    </span>
+
+    / 
+
+    <span class="summary-number">
+
+        {{ total }}
+
+    </span>
+
+    Present
+
+    &nbsp;&nbsp;
+
+    <span class="summary-percentage">
+
+        {{ percentage }}%
+
+    </span>
+
+</div>
+
+
+<!-- =========================
+     ATTENDANCE RECORDS
+========================== -->
+
+<div class="attendance-table-card">
+
+    <div class="table-wrapper">
+
+        <table class="attendance-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Course</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for record in records %}
+
+                <tr>
+
+                    <td class="attendance-date">
+
+                        <i class="far fa-calendar-alt me-2"
+                           style="color: #20a4a8;">
+                        </i>
+
+                        {{ record.date }}
+
+                    </td>
+
+
+                    <td class="course-name">
+
+                        <i class="fas fa-book-open me-2"
+                           style="color: #0f4c81;">
+                        </i>
+
+                        {{ record.course.title }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if record.status == "Present" %}
+
+                        <span class="status-badge status-present">
+
+                            <i class="fas fa-check-circle"></i>
+
+                            {{ record.status }}
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="status-badge status-absent">
+
+                            <i class="fas fa-times-circle"></i>
+
+                            {{ record.status }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="3"
+                        class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-calendar-times"></i>
+
+                        </div>
+
+                        <strong>
+                            No Attendance Records
+                        </strong>
+
+                        No attendance records are available yet.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 {% endblock %}

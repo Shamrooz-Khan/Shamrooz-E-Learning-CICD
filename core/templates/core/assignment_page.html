@@ -1,20 +1,376 @@
 {% extends 'core/student_base.html' %}
+
 {% block content %}
-<h2>Upload Assignment</h2>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label>Select Course</label>
-        <select class="form-control" name="course" required>
-            {% for course in courses %}
-            <option value="{{ course.id }}">{{ course.title }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label>Upload File</label>
-        <input type="file" name="file" class="form-control" required>
-    </div>
-    <button class="btn btn-primary">Upload</button>
-</form>
+
+<style>
+
+    /* =========================
+       UPLOAD ASSIGNMENT PAGE
+    ========================== */
+
+    .assignment-page {
+        min-height: calc(100vh - 70px);
+        padding: 30px;
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .assignment-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .assignment-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.8rem;
+
+        font-weight: 800;
+    }
+
+
+    .assignment-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.95rem;
+    }
+
+
+    /* =========================
+       FORM CARD
+    ========================== */
+
+    .assignment-card {
+        max-width: 750px;
+
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 30px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    /* =========================
+       FORM GROUP
+    ========================== */
+
+    .assignment-form-group {
+        margin-bottom: 22px;
+    }
+
+
+    .assignment-form-group label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #17324d;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .assignment-form-group label i {
+        color: #20a4a8;
+
+        margin-right: 6px;
+    }
+
+
+    /* =========================
+       FORM CONTROLS
+    ========================== */
+
+    .assignment-form-group select,
+    .assignment-form-group input[type="file"] {
+        width: 100%;
+
+        min-height: 48px;
+
+        padding: 10px 14px;
+
+        border: 1px solid #d8e4ea;
+
+        border-radius: 10px;
+
+        background: #fbfdfe;
+
+        color: #526572;
+
+        font-size: 0.9rem;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .assignment-form-group select:focus,
+    .assignment-form-group input[type="file"]:focus {
+        border-color: #20a4a8;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 164, 168, 0.12);
+
+        outline: none;
+    }
+
+
+    .assignment-form-group input[type="file"] {
+        padding: 9px;
+    }
+
+
+    /* =========================
+       UPLOAD BUTTON
+    ========================== */
+
+    .upload-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 12px 25px;
+
+        border: none;
+
+        border-radius: 25px;
+
+        background: linear-gradient(
+            135deg,
+            #20a4a8,
+            #1976a3
+        );
+
+        color: white;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease;
+
+        box-shadow:
+            0 5px 15px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .upload-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 20px rgba(15, 76, 129, 0.2);
+    }
+
+
+    /* =========================
+       INFORMATION BOX
+    ========================== */
+
+    .assignment-info {
+        margin-top: 25px;
+
+        padding: 15px 18px;
+
+        background: #e8f7f7;
+
+        border-left: 4px solid #20a4a8;
+
+        border-radius: 10px;
+
+        color: #526572;
+
+        font-size: 0.82rem;
+
+        line-height: 1.6;
+    }
+
+
+    .assignment-info i {
+        color: #0f7f83;
+
+        margin-right: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .assignment-page {
+            padding: 20px 15px;
+        }
+
+        .assignment-header {
+            padding: 25px 20px;
+        }
+
+        .assignment-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .assignment-card {
+            padding: 22px;
+        }
+
+    }
+
+</style>
+
+<div class="assignment-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="assignment-header">
+
+    <h2>
+        <i class="fas fa-file-upload me-2"></i>
+        Upload Assignment
+    </h2>
+
+    <p>
+        Select your course and upload your assignment file
+        for submission.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     ASSIGNMENT FORM
+========================== -->
+
+<div class="assignment-card">
+
+    <form method="POST"
+          enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+
+        <!-- Select Course -->
+
+        <div class="assignment-form-group">
+
+            <label for="course">
+
+                <i class="fas fa-book"></i>
+
+                Select Course
+
+            </label>
+
+            <select
+                id="course"
+                name="course"
+                required
+            >
+
+                {% for course in courses %}
+
+                <option value="{{ course.id }}">
+                    {{ course.title }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- Upload File -->
+
+        <div class="assignment-form-group">
+
+            <label for="file">
+
+                <i class="fas fa-paperclip"></i>
+
+                Upload File
+
+            </label>
+
+            <input
+                type="file"
+                id="file"
+                name="file"
+                required
+            >
+
+        </div>
+
+
+        <!-- Submit -->
+
+        <button
+            type="submit"
+            class="upload-button"
+        >
+
+            <i class="fas fa-cloud-upload-alt"></i>
+
+            Upload Assignment
+
+        </button>
+
+
+        <!-- Information -->
+
+        <div class="assignment-info">
+
+            <i class="fas fa-info-circle"></i>
+
+            Please select the correct course before uploading
+            your assignment file.
+
+        </div>
+
+
+    </form>
+
+</div>
+```
+
+</div>
+
 {% endblock %}

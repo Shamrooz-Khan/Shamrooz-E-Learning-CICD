@@ -1,26 +1,399 @@
 {% extends 'core/instructor_base.html' %}
+
 {% block instructor_content %}
-<h2>Mark Attendance – Select a Course</h2>
-<table class="table table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Course Title</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for course in courses %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ course.title }}</td>
-            <td>
-                <a href="{% url 'mark_attendance' course.id %}" class="btn btn-success btn-sm">Mark Attendance</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">You don't teach any courses yet.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<style>
+
+    /* =========================
+       ATTENDANCE PAGE
+    ========================== */
+
+    .attendance-page {
+        min-height: calc(100vh - 70px);
+        padding: 30px;
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .attendance-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .attendance-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.8rem;
+
+        font-weight: 800;
+    }
+
+
+    .attendance-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.95rem;
+    }
+
+
+    /* =========================
+       TABLE CARD
+    ========================== */
+
+    .attendance-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+
+    .attendance-table {
+        margin: 0;
+
+        border-collapse: separate;
+
+        border-spacing: 0;
+
+        width: 100%;
+    }
+
+
+    /* Table Header */
+
+    .attendance-table thead th {
+        background: #17324d;
+
+        color: white;
+
+        border: none;
+
+        padding: 15px;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .attendance-table thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+
+    .attendance-table thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+
+    /* Table Body */
+
+    .attendance-table tbody td {
+        padding: 16px 15px;
+
+        vertical-align: middle;
+
+        color: #526572;
+
+        border-bottom: 1px solid #edf2f5;
+
+        background: white;
+    }
+
+
+    .attendance-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+
+    .attendance-table tbody tr:hover td {
+        background: #f7fbfc;
+    }
+
+
+    .course-number {
+        width: 60px;
+
+        color: #0f4c81 !important;
+
+        font-weight: 700;
+    }
+
+
+    .course-title {
+        color: #17324d !important;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================
+       ACTION BUTTON
+    ========================== */
+
+    .attendance-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 9px 17px;
+
+        border-radius: 25px;
+
+        background: #20a4a8;
+
+        border: 2px solid #20a4a8;
+
+        color: white;
+
+        text-decoration: none;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .attendance-button:hover {
+        background: #0f4c81;
+
+        border-color: #0f4c81;
+
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 5px 15px rgba(15, 76, 129, 0.18);
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-state {
+        text-align: center;
+
+        padding: 50px 20px !important;
+
+        color: #7a8a95 !important;
+    }
+
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #e8f7f7;
+
+        color: #0f7f83;
+
+        font-size: 1.5rem;
+    }
+
+
+    .empty-state strong {
+        display: block;
+
+        color: #526572;
+
+        margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .attendance-page {
+            padding: 20px 15px;
+        }
+
+        .attendance-header {
+            padding: 25px 20px;
+        }
+
+        .attendance-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .attendance-card {
+            padding: 15px;
+        }
+
+        .attendance-button {
+            padding: 8px 12px;
+
+            font-size: 0.78rem;
+        }
+
+    }
+
+</style>
+
+<div class="attendance-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="attendance-header">
+
+    <h2>
+        <i class="fas fa-calendar-check me-2"></i>
+        Mark Attendance
+    </h2>
+
+    <p>
+        Select a course below to view students and record attendance.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     COURSE TABLE
+========================== -->
+
+<div class="attendance-card">
+
+    <div class="table-wrapper">
+
+        <table class="attendance-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Course Title</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for course in courses %}
+
+                <tr>
+
+                    <td class="course-number">
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td class="course-title">
+                        <i class="fas fa-book-open me-2"
+                           style="color: #20a4a8;">
+                        </i>
+
+                        {{ course.title }}
+                    </td>
+
+                    <td>
+
+                        <a href="{% url 'mark_attendance' course.id %}"
+                           class="attendance-button">
+
+                            <i class="fas fa-check-circle"></i>
+
+                            Mark Attendance
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="3"
+                        class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-book-open"></i>
+
+                        </div>
+
+                        <strong>
+                            No Courses Available
+                        </strong>
+
+                        You don't teach any courses yet.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 {% endblock %}

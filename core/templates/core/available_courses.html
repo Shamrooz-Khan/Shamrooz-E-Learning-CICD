@@ -1,29 +1,422 @@
-
 {% extends 'core/student_base.html' %}
+
 {% block content %}
-<h2>Available Courses</h2>
-<table class="table table-hover">
-    <thead class="table-primary">
-        <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Instructor</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for course in courses %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ course.title }}</td>
-            <td>{{ course.instructor.username }}</td>
-            <td>
-                <a href="{% url 'enroll_course' course.id %}" class="btn btn-success btn-sm">Enroll</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4">You're enrolled in all courses.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<style>
+
+    /* =========================
+       AVAILABLE COURSES PAGE
+    ========================== */
+
+    .courses-page {
+        min-height: calc(100vh - 70px);
+        padding: 30px;
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .courses-header {
+        background: linear-gradient(
+            135deg,
+            #17324d 0%,
+            #0f4c81 60%,
+            #1976a3 100%
+        );
+
+        color: white;
+
+        padding: 30px;
+
+        border-radius: 18px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.12);
+    }
+
+
+    .courses-header h2 {
+        margin: 0 0 8px;
+
+        font-size: 1.8rem;
+
+        font-weight: 800;
+    }
+
+
+    .courses-header p {
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.95rem;
+    }
+
+
+    /* =========================
+       COURSES CARD
+    ========================== */
+
+    .courses-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        border: 1px solid #e1edf2;
+
+        box-shadow:
+            0 8px 25px rgba(15, 76, 129, 0.06);
+    }
+
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+
+    /* =========================
+       TABLE
+    ========================== */
+
+    .courses-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+
+        border-spacing: 0;
+    }
+
+
+    .courses-table thead th {
+        background: #17324d;
+
+        color: white;
+
+        border: none;
+
+        padding: 15px;
+
+        font-size: 0.9rem;
+
+        font-weight: 700;
+    }
+
+
+    .courses-table thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+
+    .courses-table thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+
+    .courses-table tbody td {
+        padding: 16px 15px;
+
+        vertical-align: middle;
+
+        color: #526572;
+
+        background: white;
+
+        border-bottom: 1px solid #edf2f5;
+    }
+
+
+    .courses-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+
+    .courses-table tbody tr:hover td {
+        background: #f7fbfc;
+    }
+
+
+    .course-number {
+        width: 60px;
+
+        color: #0f4c81 !important;
+
+        font-weight: 700;
+    }
+
+
+    .course-title {
+        color: #17324d !important;
+
+        font-weight: 700;
+    }
+
+
+    .course-instructor {
+        color: #667781 !important;
+    }
+
+
+    /* =========================
+       ENROLL BUTTON
+    ========================== */
+
+    .enroll-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 9px 18px;
+
+        border-radius: 25px;
+
+        background: #20a4a8;
+
+        border: 2px solid #20a4a8;
+
+        color: white;
+
+        text-decoration: none;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+
+        transition: all 0.25s ease;
+    }
+
+
+    .enroll-button:hover {
+        background: #0f4c81;
+
+        border-color: #0f4c81;
+
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 5px 15px rgba(15, 76, 129, 0.18);
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-state {
+        text-align: center;
+
+        padding: 55px 20px !important;
+
+        color: #7a8a95 !important;
+    }
+
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #e8f7f7;
+
+        color: #0f7f83;
+
+        font-size: 1.5rem;
+    }
+
+
+    .empty-state strong {
+        display: block;
+
+        color: #526572;
+
+        margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 768px) {
+
+        .courses-page {
+            padding: 20px 15px;
+        }
+
+        .courses-header {
+            padding: 25px 20px;
+        }
+
+        .courses-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .courses-card {
+            padding: 15px;
+        }
+
+        .enroll-button {
+            padding: 8px 13px;
+
+            font-size: 0.78rem;
+        }
+
+    }
+
+</style>
+
+<div class="courses-page">
+
+```
+<!-- =========================
+     PAGE HEADER
+========================== -->
+
+<div class="courses-header">
+
+    <h2>
+        <i class="fas fa-book-open me-2"></i>
+        Available Courses
+    </h2>
+
+    <p>
+        Explore available courses and enroll in the ones
+        you want to study.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     COURSES TABLE
+========================== -->
+
+<div class="courses-card">
+
+    <div class="table-wrapper">
+
+        <table class="courses-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Title</th>
+
+                    <th>Instructor</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for course in courses %}
+
+                <tr>
+
+                    <td class="course-number">
+                        {{ forloop.counter }}
+                    </td>
+
+
+                    <td class="course-title">
+
+                        <i class="fas fa-book me-2"
+                           style="color: #20a4a8;">
+                        </i>
+
+                        {{ course.title }}
+
+                    </td>
+
+
+                    <td class="course-instructor">
+
+                        <i class="fas fa-user-tie me-2"
+                           style="color: #0f4c81;">
+                        </i>
+
+                        {{ course.instructor.username }}
+
+                    </td>
+
+
+                    <td>
+
+                        <a href="{% url 'enroll_course' course.id %}"
+                           class="enroll-button">
+
+                            <i class="fas fa-user-plus"></i>
+
+                            Enroll
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4"
+                        class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i class="fas fa-graduation-cap"></i>
+
+                        </div>
+
+                        <strong>
+                            No Courses Available
+                        </strong>
+
+                        You're enrolled in all available courses.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 {% endblock %}

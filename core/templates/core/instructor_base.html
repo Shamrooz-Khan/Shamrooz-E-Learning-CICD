@@ -1,55 +1,455 @@
 {% extends 'core/base.html' %}
+
 {% load static %}
+
 {% block title %}Instructor Portal{% endblock %}
 
 {% block content %}
+
 <style>
-    body {
+
+    /* =========================
+       INSTRUCTOR PORTAL
+    ========================== */
+
+    .instructor-portal {
+        min-height: calc(100vh - 70px);
+        background: #f4f8fb;
+    }
+
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .instructor-sidebar {
+        position: fixed;
+
+        left: 0;
+
+        top: 70px;
+
+        width: 250px;
+
+        height: calc(100vh - 70px);
+
+        background: linear-gradient(
+            180deg,
+            #17324d 0%,
+            #0f4c81 100%
+        );
+
+        color: white;
+
+        padding: 25px 15px;
+
+        overflow-y: auto;
+
+        z-index: 900;
+
+        box-shadow:
+            4px 0 18px rgba(15, 76, 129, 0.12);
+    }
+
+
+    /* =========================
+       SIDEBAR BRAND
+    ========================== */
+
+    .instructor-brand {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 10px 12px 25px;
+
+        margin-bottom: 15px;
+
+        border-bottom:
+            1px solid rgba(255, 255, 255, 0.12);
+    }
+
+
+    .instructor-brand-icon {
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background: #20a4a8;
+
+        color: white;
+
+        font-size: 1.1rem;
+    }
+
+
+    .instructor-brand-text {
+        font-size: 1rem;
+
+        font-weight: 800;
+
+        line-height: 1.2;
+    }
+
+
+    .instructor-brand-text small {
+        display: block;
+
+        margin-top: 4px;
+
+        color: rgba(255, 255, 255, 0.65);
+
+        font-size: 0.72rem;
+
+        font-weight: 400;
+    }
+
+
+    /* =========================
+       SIDEBAR MENU
+    ========================== */
+
+    .instructor-menu {
+        list-style: none;
+
+        padding: 0;
+
         margin: 0;
     }
-    .sidebar {
-        height: 100vh;
-        background-color: #2e7d32;
-        color: white;
-        padding: 20px;
-        position: fixed;
-        width: 250px;
-        top: 0;
-        left: 0;
+
+
+    .instructor-menu li {
+        margin-bottom: 5px;
     }
-    .sidebar h4 {
-        margin-bottom: 30px;
-        font-weight: bold;
-    }
-    .sidebar a {
-        display: block;
-        color: white;
+
+
+    .instructor-menu a {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+
+        padding: 12px 13px;
+
+        border-radius: 10px;
+
+        color: rgba(255, 255, 255, 0.82);
+
         text-decoration: none;
-        padding: 10px 0;
+
+        font-size: 0.9rem;
+
+        font-weight: 500;
+
+        transition: all 0.25s ease;
     }
-    .sidebar a:hover {
-        background-color: #1b5e20;
-        padding-left: 10px;
+
+
+    .instructor-menu a i {
+        width: 22px;
+
+        text-align: center;
+
+        font-size: 16px;
     }
-    .main-content {
-        margin-left: 260px;
-        padding: 20px;
+
+
+    .instructor-menu a:hover {
+        background: rgba(255, 255, 255, 0.12);
+
+        color: white;
+
+        transform: translateX(3px);
     }
+
+
+    .instructor-menu a:hover i {
+        color: #20a4a8;
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================== */
+
+    .instructor-logout {
+        margin-top: 15px;
+
+        padding-top: 15px !important;
+
+        border-top:
+            1px solid rgba(255, 255, 255, 0.12);
+    }
+
+
+    .instructor-logout:hover {
+        background: rgba(220, 53, 69, 0.15) !important;
+
+        color: #ffb3b8 !important;
+    }
+
+
+    .instructor-logout i {
+        color: #ff8f96;
+    }
+
+
+    /* =========================
+       MAIN CONTENT
+    ========================== */
+
+    .instructor-main {
+        margin-left: 250px;
+
+        min-height: calc(100vh - 70px);
+
+        padding: 0;
+    }
+
+
+    /* =========================
+       MOBILE SIDEBAR
+    ========================== */
+
+    @media (max-width: 992px) {
+
+        .instructor-sidebar {
+            position: relative;
+
+            top: 0;
+
+            width: 100%;
+
+            height: auto;
+
+            padding: 15px;
+
+            box-shadow: none;
+        }
+
+
+        .instructor-brand {
+            margin-bottom: 10px;
+        }
+
+
+        .instructor-menu {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 5px;
+        }
+
+
+        .instructor-menu li {
+            margin: 0;
+        }
+
+
+        .instructor-main {
+            margin-left: 0;
+        }
+
+    }
+
+
+    @media (max-width: 576px) {
+
+        .instructor-menu {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
 </style>
 
-<div class="sidebar">
-    <h4>E-Learning (Instructor)</h4>
-    <a href="{% url 'instructor_dashboard' %}">Home</a>
-    <a href="{% url 'upload_materials' %}">Upload Materials</a>
-    <a href="{% url 'instructor_courses' %}">Courses</a>
-    <a href="{% url 'view_feedback' %}">View Feedback</a>
-    <a href="{% url 'attendance_home' %}">Attendance</a>
-    <a href="{% url 'student_list' %}">Manage Students</a>
-    <a href="{% url 'simulate_devops' %}">DevOps Simulation</a>
-    <a href="{% url 'logout' %}">Logout</a>
+<div class="instructor-portal">
+
+```
+<!-- =========================
+     INSTRUCTOR SIDEBAR
+========================== -->
+
+<aside class="instructor-sidebar">
+
+
+    <!-- Brand -->
+
+    <div class="instructor-brand">
+
+        <div class="instructor-brand-icon">
+
+            <i class="fas fa-chalkboard-teacher"></i>
+
+        </div>
+
+        <div class="instructor-brand-text">
+
+            E-Learning
+
+            <small>
+                Instructor Portal
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- Navigation -->
+
+    <ul class="instructor-menu">
+
+
+        <li>
+
+            <a href="{% url 'instructor_dashboard' %}">
+
+                <i class="fas fa-home"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'upload_materials' %}">
+
+                <i class="fas fa-upload"></i>
+
+                <span>Upload Materials</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'create_course' %}">
+
+                <i class="fas fa-plus-circle"></i>
+
+                <span>Create Course</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'instructor_courses' %}">
+
+                <i class="fas fa-book-open"></i>
+
+                <span>Courses</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'view_feedback' %}">
+
+                <i class="fas fa-comments"></i>
+
+                <span>View Feedback</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'attendance_home' %}">
+
+                <i class="fas fa-calendar-check"></i>
+
+                <span>Attendance</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'student_list' %}">
+
+                <i class="fas fa-users"></i>
+
+                <span>Manage Students</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'simulate_devops' %}">
+
+                <i class="fas fa-code-branch"></i>
+
+                <span>DevOps Simulation</span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="{% url 'logout' %}"
+               class="instructor-logout">
+
+                <i class="fas fa-sign-out-alt"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+</aside>
+
+
+<!-- =========================
+     MAIN CONTENT
+========================== -->
+
+<main class="instructor-main">
+
+    {% block instructor_content %}
+
+    {% endblock %}
+
+</main>
+```
+
 </div>
 
-<div class="main-content">
-    {% block instructor_content %}{% endblock %}
-</div>
 {% endblock %}
+
